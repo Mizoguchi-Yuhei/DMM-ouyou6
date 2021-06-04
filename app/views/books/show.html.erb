@@ -22,39 +22,18 @@
             <td><%= link_to 'Edit', edit_book_path(@book), class: "btn btn-sm btn-success edit_book_#{@book.id}" %></td>
             <td><%= link_to 'Destroy', book_path(@book), method: :delete, data: { confirm: '本当に消しますか？' }, class: "btn btn-sm btn-danger destroy_book_#{@book.id}"%></td>
           <% end %>
-          <td>
-            <% if @book.favorited_by?(current_user) %>
-              <p>
-                <%= link_to book_favorites_path(@book), method: :delete do %>
-                  <i class="fa fa-heart liked" ><%= @book.favorites.count %></i>
-                <% end %>
-              </p>
-            <% else %>
-              <p>
-                <%= link_to book_favorites_path(@book), method: :post do %>
-                  <i class="fa fa-heart" ><%= @book.favorites.count %></i>
-                <% end %>
-              </p>
-            <% end %>
+          <td class="favorite-btn_<%= @book.id %>">
+            <%= render "favorites/favorite-btn", book: @book %>
           </td>
           <td>コメント数：<%= @book.book_comments.count %></td>
         </tr>
       </table>
 
-      <table class="table">
-        <% @book.book_comments.each do |book_comment| %>
-          <tr>
-            <td>
-              <%= attachment_image_tag book_comment.user, :profile_image, :fill, 50, 50, fallback: "no-image-icon.jpg" %><br>
-              <%= book_comment.user.name %>
-            </td>
-            <td><%= book_comment.comment %></td>
-            <td><%= link_to "Destroy", book_book_comments_path(book_comment), method: :delete, class: "btn btn-danger" %></td>
-          </tr>
-        <% end %>
-      </table>
+      <div class="comments_<%= @book.id %>">
+        <%= render "book_comments/comments", book: @book %>
+      </div>
 
-      <%= form_with model: [@book, @book_comment], local:true do |f| %>
+      <%= form_with model: [@book, @comment], method: :post, remote: true do |f| %>
         <div class="form-group">
           <% f.label :comment %>
           <%= f.text_area :comment, class: "form-control book_comment", rows: "4" %>
